@@ -6,7 +6,7 @@ dziekańskich na podstawie ich planów zajęć w formacie iCalendar (.ics).
 Domyślnie:
   * analizowane są piątki, soboty i niedziele (weekendy zjazdowe),
   * seminarium trwa 3 godziny,
-  * bierzemy pod uwagę okno dnia 08:00-21:00,
+  * bierzemy pod uwagę okno dnia 08:00-21:00, a w piątki dopiero od 18:00,
   * zajęcia oznaczone jako "przen" (przeniesione) są pomijane, bo w tym
     terminie faktycznie się nie odbywają,
   * analizowany zakres dat to od pierwszych do ostatnich zajęć w planach.
@@ -222,9 +222,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="najwcześniejsza godzina rozpoczęcia (domyślnie 08:00)")
     parser.add_argument("--do", type=parsuj_godzine, default=time(21, 0),
                         help="najpóźniejsza godzina zakończenia (domyślnie 21:00)")
-    parser.add_argument("--piatek-od", type=parsuj_godzine, default=None,
-                        help="osobna najwcześniejsza godzina dla piątków (np. 16:00, "
-                             "jeśli w piątki ludzie pracują)")
+    parser.add_argument("--piatek-od", type=parsuj_godzine, default=time(18, 0),
+                        help="osobna najwcześniejsza godzina dla piątków "
+                             "(domyślnie 18:00, bo w piątki ludzie pracują)")
     parser.add_argument("--bufor", type=int, default=0,
                         help="minimalna przerwa (w min) między zajęciami a seminarium (domyślnie 0)")
     parser.add_argument("--data-od", type=parsuj_dzien, default=None,
