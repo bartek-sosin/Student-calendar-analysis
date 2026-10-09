@@ -18,6 +18,7 @@ Przydatne opcje:
 
 | Opcja | Opis |
 |---|---|
+| `--uwzglednij-swieta` | nie pomijaj świąt ustawowo wolnych od pracy (domyślnie są pomijane) |
 | `--tylko-zjazdy` | tylko dni, w które przynajmniej jedna grupa ma zajęcia (i tak jesteście na uczelni) |
 | `--dni pt,sob,nd` | dni tygodnia do analizy (domyślnie `pt,sob`) |
 | `--od 09:00 --do 19:00` | ramy godzinowe dnia (domyślnie 08:00–21:00, w piątki od 18:00) |

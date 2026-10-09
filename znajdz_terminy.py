@@ -9,6 +9,7 @@ Domyślnie:
   * bierzemy pod uwagę okno dnia 08:00-21:00, a w piątki dopiero od 18:00,
   * zajęcia oznaczone jako "przen" (przeniesione) są pomijane, bo w tym
     terminie faktycznie się nie odbywają,
+  * pomijane są polskie święta ustawowo wolne od pracy,
   * analizowany zakres dat to od pierwszych do ostatnich zajęć w planach.
 
 Przykłady:
@@ -139,6 +140,48 @@ def nazwa_grupy(sciezka: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Święta
+# --------------------------------------------------------------------------- #
+
+def wielkanoc(rok: int) -> date:
+    """Data Wielkanocy (algorytm Meeusa/Jonesa/Butchera)."""
+    a, b, c = rok % 19, rok // 100, rok % 100
+    d, e = b // 4, b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = c // 4, c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    miesiac = (h + l - 7 * m + 114) // 31
+    dzien = (h + l - 7 * m + 114) % 31 + 1
+    return date(rok, miesiac, dzien)
+
+
+def swieta_w_polsce(rok: int) -> dict[date, str]:
+    """Dni ustawowo wolne od pracy w Polsce."""
+    w = wielkanoc(rok)
+    swieta = {
+        date(rok, 1, 1): "Nowy Rok",
+        date(rok, 1, 6): "Trzech Króli",
+        w: "Wielkanoc",
+        w + timedelta(days=1): "Poniedziałek Wielkanocny",
+        date(rok, 5, 1): "Święto Pracy",
+        date(rok, 5, 3): "Święto Konstytucji 3 Maja",
+        w + timedelta(days=49): "Zielone Świątki",
+        w + timedelta(days=60): "Boże Ciało",
+        date(rok, 8, 15): "Wniebowzięcie NMP",
+        date(rok, 11, 1): "Wszystkich Świętych",
+        date(rok, 11, 11): "Święto Niepodległości",
+        date(rok, 12, 25): "Boże Narodzenie",
+        date(rok, 12, 26): "Boże Narodzenie (2. dzień)",
+    }
+    if rok >= 2025:
+        swieta[date(rok, 12, 24)] = "Wigilia"
+    return swieta
+
+
+# --------------------------------------------------------------------------- #
 # Wyszukiwanie wolnych okien
 # --------------------------------------------------------------------------- #
 
@@ -234,6 +277,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--uwzglednij-przeniesione", action="store_true",
                         help="traktuj zajęcia oznaczone 'przen' jako zajęte "
                              "(domyślnie są pomijane, bo zostały przeniesione)")
+    parser.add_argument("--uwzglednij-swieta", action="store_true",
+                        help="nie pomijaj świąt ustawowo wolnych od pracy")
     parser.add_argument("--tylko-zjazdy", action="store_true",
                         help="pokazuj tylko dni, w które przynajmniej jedna grupa ma zajęcia "
                              "(czyli i tak jest się na uczelni)")
@@ -275,6 +320,11 @@ def main(argv: list[str] | None = None) -> int:
             d += timedelta(days=1)
 
     print(f"Grupy ({len(grupy)}): {', '.join(grupy)}")
+    swieta: dict[date, str] = {}
+    if not args.uwzglednij_swieta:
+        for rok in range(data_od.year, data_do.year + 1):
+            swieta.update(swieta_w_polsce(rok))
+
     print(f"Zakres dat: {data_od} – {data_do}")
     print(f"Dni: {', '.join(NAZWY_DNI[d] for d in sorted(args.dni))}")
     okno_txt = f"{args.od:%H:%M}–{args.do:%H:%M}"
@@ -282,6 +332,8 @@ def main(argv: list[str] | None = None) -> int:
         okno_txt += f" (piątki od {args.piatek_od:%H:%M})"
     print(f"Okno dnia: {okno_txt}, długość seminarium: {fmt_czas(dlugosc)}"
           + (f", bufor: {args.bufor} min" if args.bufor else ""))
+    if swieta:
+        print("Pomijane są święta ustawowo wolne od pracy.")
     if pominiete:
         print(f"Pominięto {pominiete} wpisów oznaczonych jako przeniesione ('przen').")
     print()
@@ -291,6 +343,9 @@ def main(argv: list[str] | None = None) -> int:
     dzien = data_od
     while dzien <= data_do:
         if dzien.weekday() not in args.dni:
+            dzien += timedelta(days=1)
+            continue
+        if dzien in swieta:
             dzien += timedelta(days=1)
             continue
         zajecia_dnia = zajete_wg_dnia.get(dzien, [])
