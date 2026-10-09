@@ -1,7 +1,7 @@
 # Wspólne terminy na seminarium magisterskie
 
 Skrypt `znajdz_terminy.py` czyta plany zajęć (pliki `.ics`) kilku grup dziekańskich
-i wypisuje piątki, soboty i niedziele, w które **żadna z grup nie ma zajęć**
+i wypisuje piątki i soboty, w które **żadna z grup nie ma zajęć**
 w oknie co najmniej 3 godzin, czyli takie, w które zmieści się seminarium magisterskie.
 
 Wymaga tylko Pythona 3.9+ (bez dodatkowych bibliotek).
@@ -19,7 +19,7 @@ Przydatne opcje:
 | Opcja | Opis |
 |---|---|
 | `--tylko-zjazdy` | tylko dni, w które przynajmniej jedna grupa ma zajęcia (i tak jesteście na uczelni) |
-| `--dni sob,nd` | dni tygodnia do analizy (domyślnie `pt,sob,nd`) |
+| `--dni pt,sob,nd` | dni tygodnia do analizy (domyślnie `pt,sob`) |
 | `--od 09:00 --do 19:00` | ramy godzinowe dnia (domyślnie 08:00–21:00, w piątki od 18:00) |
 | `--piatek-od 16:00` | najwcześniejsza godzina dla piątków (domyślnie 18:00) |
 | `--dlugosc 180` | długość seminarium w minutach (domyślnie 180) |

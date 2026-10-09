@@ -4,7 +4,7 @@ Szuka wspólnych wolnych terminów na seminarium magisterskie dla kilku grup
 dziekańskich na podstawie ich planów zajęć w formacie iCalendar (.ics).
 
 Domyślnie:
-  * analizowane są piątki, soboty i niedziele (weekendy zjazdowe),
+  * analizowane są piątki i soboty,
   * seminarium trwa 3 godziny,
   * bierzemy pod uwagę okno dnia 08:00-21:00, a w piątki dopiero od 18:00,
   * zajęcia oznaczone jako "przen" (przeniesione) są pomijane, bo w tym
@@ -214,8 +214,8 @@ def main(argv: list[str] | None = None) -> int:
                     "i mieści się seminarium o zadanej długości.")
     parser.add_argument("pliki", nargs="*",
                         help="pliki .ics (domyślnie wszystkie z katalogu kalendarze/)")
-    parser.add_argument("--dni", type=parsuj_dni, default=parsuj_dni("pt,sob,nd"),
-                        help="dni tygodnia do analizy, np. pt,sob,nd (domyślnie)")
+    parser.add_argument("--dni", type=parsuj_dni, default=parsuj_dni("pt,sob"),
+                        help="dni tygodnia do analizy (domyślnie pt,sob; np. pt,sob,nd)")
     parser.add_argument("--dlugosc", type=int, default=180,
                         help="długość seminarium w minutach (domyślnie 180)")
     parser.add_argument("--od", type=parsuj_godzine, default=time(8, 0),
